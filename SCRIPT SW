@@ -1,0 +1,65 @@
+enable
+clock set 18:49:00 25 september 2019
+configure terminal
+clock timezone GMT -3
+show clock 
+hostname SW-01
+banner motd "ACESSO PERMITIDO PARA PESSOAS AUTORIZADAS"
+enable secret SenhadaEnable
+line console 0 
+password SenhadaConsole
+login
+exit
+ip domain-name grupo7.local
+username kauealcaraz privilege 15 secret kaue123
+username leonardo privilege 15 secret leo123
+username pedrohenrique privilege 15 secret pedro123
+username rickelme privilege 15 secret rickelme123
+login block-for 60 attemps 4 within  60
+security password min-lenght 8 
+crypto key generate rsa general-key modulus 1024
+line vty 0 15
+transport input ssh
+login local
+exec-timeout 9
+service password-encryption
+vlan 10
+name ADMINISTRACAO 
+vlan 20 
+name RH
+vlan 30
+name TI
+interface vlan 10 
+ip address 192.168.7.128 255.255.255.224
+description VLAN 10
+no shutdown
+exit
+interface vlan 20
+ip address 192.168.7.0 255.255.255.128
+description VLAN 20
+no shutdown
+exit
+interface vlan 30 
+ip address 192.168.7.160 255.255.255.240
+description VLAN 30
+no shutdown
+exit
+ip default-gateway 192.168.7.1
+interface f0/1 
+switchport mode access 
+switchport access vlan 10
+exit
+interface f0/2 
+switchport mode access
+switchport access vlan 20 
+exit
+interface f0/3
+switchport mode access
+switchport access vlan 30
+exit
+interface g0/2
+switchport mode trunk 
+switchport trunk native vlan 99
+switchport trunk allowed vlan 10,20,30,99
+description TRUNK ROUTER 
+do wr 
